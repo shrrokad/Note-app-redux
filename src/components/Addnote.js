@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useDispatch } from 'react-redux/es/exports';
 import { ADDNOTE } from '../action/action';
 import './style.css'
+import axios from 'axios';
 
 
 const Addnote = () => {
@@ -13,17 +14,22 @@ const Addnote = () => {
     const randomColor = '#' +  Math.floor(Math.random() * 16777215).toString(16)
     
     const initialstate = {
-        id: "",
+        id: uuidv4(),
         title: "",
         discription: "",
         color: randomColor,
     }
 
     const [alldata, setAlldata] = useState(initialstate)
+    // console.log(alldata);
+    // const [s]
 
-    const handelsubmit = (e) => {
+    const handelsubmit = async (e) => {
         e.preventDefault()
-        dispatch(ADDNOTE({...alldata, id: uuidv4(), color: randomColor}))
+        setAlldata({...alldata, color : randomColor})
+        await axios.post(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`, alldata)
+        // const result = await axios.get(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`)
+        // console.log(Object.values(result.data));
     }
 
   return (
