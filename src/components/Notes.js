@@ -9,56 +9,51 @@ import { UPDATEDATA } from '../action/action';
 import { UPDATEDES } from '../action/action';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 
 const Notes = () => {
 
     const dispatch = useDispatch()
     const [notes, setNotes] = useState()
-    console.log(notes, '---->notes');
+    // console.log(notes, '---->notes');
     const [updatenotes, setUpdatenotes] = useState()
-    console.log(updatenotes, '--->updatenotes');
+    // console.log(updatenotes, '--->updatenotes');
     const [search, setSearch] = useState('')
-
-    const getdata = useSelector((state) => state.NoteReducer.Note)
-
-    const NotesData = getdata
 
     const apidata = async () => {
         const result = await axios.get(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`)
         const a = Object.keys(result.data).map((element) => { return { ...result.data[element], _id: element } })
-        // setNotes(NotesData)
         setNotes(a)
     }
+
+    // const getdata = useSelector((state) => state.NoteReducer.Notes)
+    // // console.log({getdata});
 
 
     const handelchange = async (e, id, colore, _id) => {
         setUpdatenotes("")
         setUpdatenotes({ ...updatenotes, id: id, _id: _id, color: colore, [e.target.name]: e.target.value })
-        // if (notes._id == _id) {
-            await axios.put(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${ _id}.json`, updatenotes)
-            console.log('true1');
-        // }
+        await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${_id}.json`, updatenotes)
+        await apidata()
     }
     const handelchangedescription = async (e, id, colore, _id) => {
         setUpdatenotes("")
         setUpdatenotes({ ...updatenotes, id: id, _id: _id, color: colore, [e.target.name]: e.target.value })
-        // if (notes._id == _id) {
-            await axios.put(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${ _id}.json`, updatenotes)
-            console.log('true2');
-        // }
+        await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${_id}.json`, updatenotes)
+        await apidata()
     }
 
     const handelDelete = async (e, id) => {
         e.preventDefault()
         await axios.delete(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${id}.json`)
-        // dispatch(DELETEDATA(id))
+        await apidata()
     }
 
     const searchdata = () => {
         if (notes === undefined) {
         } else {
-            const allsearchdata = notes.filter((data) => data.title.toLowerCase().includes(search.toLocaleLowerCase()) || data.discription.toLowerCase().includes(search.toLocaleLowerCase()))
+            const allsearchdata = notes.filter((data) => data.title.toLocaleLowerCase().includes(search.toLocaleLowerCase()) || data.discription.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
             return allsearchdata;
         }
     }
@@ -102,7 +97,7 @@ const Notes = () => {
                     <div className="row">
                         {
                             notes === undefined ? "" :
-                            searchdata().map((data, index) =>
+                                searchdata().map((data, index) =>
                                 (
                                     <div className="col-lg-4 col-md-6 col-sm-12 mt-3" key={data.id}>
                                         <div className='note-card' style={{ backgroundColor: data.color }}>
@@ -139,14 +134,7 @@ const Notes = () => {
             <div className="row">
                 <div className="col-12">
                     <div className='position'>
-                        {/* <div className="container"> */}
-                        {/* <div className="row"> */}
-                        {/* <div className="col-12">
-                            <button className='button' onClick={(e) => handelsubmit(e)}>Add New Note</button>
-                        </div> */}
-                        {/* </div> */}
-                        {/* </div> */}
-                        <Addnote />
+                        <Addnote notesdata={async () =>  apidata}/>
                     </div>
                 </div>
             </div>
