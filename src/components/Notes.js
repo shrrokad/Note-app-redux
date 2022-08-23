@@ -23,25 +23,23 @@ const Notes = () => {
 
     const apidata = async () => {
         const result = await axios.get(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`)
-        const a = Object.keys(result.data).map((element) => { return { ...result.data[element], _id: element } })
+        const a = Object.keys(result.data).map((element) =>  {return { ...result.data[element], _id: element } })
         setNotes(a)
+        return result.data
     }
-
-    // const getdata = useSelector((state) => state.NoteReducer.Notes)
-    // // console.log({getdata});
 
 
     const handelchange = async (e, id, colore, _id) => {
         setUpdatenotes("")
-        setUpdatenotes({ ...updatenotes, id: id, _id: _id, color: colore, [e.target.name]: e.target.value })
+        setUpdatenotes({ ...updatenotes, _id: _id, [e.target.name]: e.target.value })
         await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${_id}.json`, updatenotes)
-        await apidata()
+        apidata()
     }
     const handelchangedescription = async (e, id, colore, _id) => {
         setUpdatenotes("")
-        setUpdatenotes({ ...updatenotes, id: id, _id: _id, color: colore, [e.target.name]: e.target.value })
+        setUpdatenotes({ ...updatenotes, _id: _id, [e.target.name]: e.target.value })
         await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${_id}.json`, updatenotes)
-        await apidata()
+        apidata()
     }
 
     const handelDelete = async (e, id) => {
@@ -134,7 +132,7 @@ const Notes = () => {
             <div className="row">
                 <div className="col-12">
                     <div className='position'>
-                        <Addnote notesdata={async () =>  apidata}/>
+                        <Addnote data = {apidata}/>
                     </div>
                 </div>
             </div>
