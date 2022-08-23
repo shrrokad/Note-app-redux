@@ -21,15 +21,14 @@ const Addnote = () => {
     }
 
     const [alldata, setAlldata] = useState(initialstate)
-    // console.log(alldata);
+    // console.log({alldata});  
     // const [s]
 
     const handelsubmit = async (e) => {
         e.preventDefault()
+        // await axios.get(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`)
         setAlldata({...alldata, color : randomColor})
         await axios.post(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`, alldata)
-        // const result = await axios.get(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`)
-        // console.log(Object.values(result.data));
     }
 
   return (

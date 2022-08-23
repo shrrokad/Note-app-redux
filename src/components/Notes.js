@@ -20,67 +20,53 @@ const Notes = () => {
     console.log(updatenotes, '--->updatenotes');
     const [search, setSearch] = useState('')
 
-    // const getdata = useSelector((state) => state.NoteReducer.Note)
+    const getdata = useSelector((state) => state.NoteReducer.Note)
 
-    // const NotesData = getdata
-
+    const NotesData = getdata
 
     const apidata = async () => {
         const result = await axios.get(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`)
         const a = Object.keys(result.data).map((element) => { return { ...result.data[element], _id: element } })
+        // setNotes(NotesData)
         setNotes(a)
     }
 
 
     const handelchange = async (e, id, colore, _id) => {
         setUpdatenotes("")
-        await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json/${_id}`, updatenotes)
-        setUpdatenotes({ ...updatenotes, id: id, color: colore, [e.target.name]: e.target.value })
+        setUpdatenotes({ ...updatenotes, id: id, _id: _id, color: colore, [e.target.name]: e.target.value })
+        // if (notes._id == _id) {
+            await axios.put(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${ _id}.json`, updatenotes)
+            console.log('true1');
+        // }
     }
     const handelchangedescription = async (e, id, colore, _id) => {
         setUpdatenotes("")
-        await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json/${_id}`, updatenotes)
-        setUpdatenotes({ ...updatenotes, id: id, color: colore, [e.target.name]: e.target.value })
+        setUpdatenotes({ ...updatenotes, id: id, _id: _id, color: colore, [e.target.name]: e.target.value })
+        // if (notes._id == _id) {
+            await axios.put(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${ _id}.json`, updatenotes)
+            console.log('true2');
+        // }
     }
 
-    const handelDelete = (e, id) => {
+    const handelDelete = async (e, id) => {
         e.preventDefault()
-        dispatch(DELETEDATA(id))
+        await axios.delete(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${id}.json`)
+        // dispatch(DELETEDATA(id))
     }
 
-    // const searchdata = () => {
-    //     // if (notes === undefined) {
-    //     // } else {
-    //     //     const allsearchdata = notes.filter((data) => data.title.toLowerCase().includes(search.toLocaleLowerCase()) || data.discription.toLowerCase().includes(search.toLocaleLowerCase()))
-    //     //     return allsearchdata;
-    //     // }
-    // }
+    const searchdata = () => {
+        if (notes === undefined) {
+        } else {
+            const allsearchdata = notes.filter((data) => data.title.toLowerCase().includes(search.toLocaleLowerCase()) || data.discription.toLowerCase().includes(search.toLocaleLowerCase()))
+            return allsearchdata;
+        }
+    }
 
     const clearsearch = (e) => {
         e.preventDefault()
         setSearch("")
     }
-
-
-    // // add button 
-
-
-    // const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16)
-
-    // const initialstate = {
-    //     id: "",
-    //     title: "",
-    //     discription: "",
-    //     color: randomColor,
-    // }
-
-    // const [alldata, setAlldata] = useState(initialstate)
-
-    // const handelsubmit = async (e) => {
-    //     // e.preventDefault()
-    //     setAlldata({ ...alldata, id: uuidv4(), color: randomColor })
-    //     await axios.post(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata.json`, alldata)
-    // }
 
     useEffect(() => {
         apidata()
@@ -116,9 +102,9 @@ const Notes = () => {
                     <div className="row">
                         {
                             notes === undefined ? "" :
-                                notes.map((data, index) =>
+                            searchdata().map((data, index) =>
                                 (
-                                    <div className="col-lg-4 col-md-6 col-sm-12 mt-3" key={index}>
+                                    <div className="col-lg-4 col-md-6 col-sm-12 mt-3" key={data.id}>
                                         <div className='note-card' style={{ backgroundColor: data.color }}>
                                             <form>
                                                 <div>
@@ -139,7 +125,7 @@ const Notes = () => {
                                                         onBlur={(e) => handelchangedescription(e, data.id, data.color, data._id)} />
                                                 </div>
                                                 <div>
-                                                    <button onClick={(e) => handelDelete(e, data.id)} className='delete-btn margin'><MdDelete /></button>
+                                                    <button onClick={(e) => handelDelete(e, data._id)} className='delete-btn margin'><MdDelete /></button>
                                                 </div>
                                             </form>
                                         </div>
