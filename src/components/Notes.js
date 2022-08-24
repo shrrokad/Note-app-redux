@@ -16,9 +16,7 @@ const Notes = () => {
 
     const dispatch = useDispatch()
     const [notes, setNotes] = useState()
-    // console.log(notes, '---->notes');
     const [updatenotes, setUpdatenotes] = useState()
-    // console.log(updatenotes, '--->updatenotes');
     const [search, setSearch] = useState('')
 
     const apidata = async () => {
@@ -33,13 +31,13 @@ const Notes = () => {
         setUpdatenotes("")
         setUpdatenotes({ ...updatenotes, _id: _id, [e.target.name]: e.target.value })
         await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${_id}.json`, updatenotes)
-        apidata()
+        await apidata()
     }
     const handelchangedescription = async (e, id, colore, _id) => {
         setUpdatenotes("")
         setUpdatenotes({ ...updatenotes, _id: _id, [e.target.name]: e.target.value })
         await axios.patch(`https://note-app-bfc54-default-rtdb.firebaseio.com/notedata/${_id}.json`, updatenotes)
-        apidata()
+        await apidata()
     }
 
     const handelDelete = async (e, id) => {
@@ -97,7 +95,7 @@ const Notes = () => {
                             notes === undefined ? "" :
                                 searchdata().map((data, index) =>
                                 (
-                                    <div className="col-lg-4 col-md-6 col-sm-12 mt-3" key={data.id}>
+                                    <div className="col-lg-4 col-md-6 col-sm-12 mt-3" key={data._id}>
                                         <div className='note-card' style={{ backgroundColor: data.color }}>
                                             <form>
                                                 <div>
